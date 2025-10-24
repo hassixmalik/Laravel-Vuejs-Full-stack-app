@@ -1,66 +1,54 @@
-# Customer Management Web App
+# 💼 Mini ERP — Customer, Invoice & Inventory Management System
 
-A lightweight customer management web application built using **Laravel 12** and **Vue.js 3**.  
-This project provides a modern and responsive interface for managing customers, invoices, and orders — designed for small to medium-sized businesses.
+A lightweight **Mini ERP web application** built using **Laravel 12** and **Vue.js 3**.  
+This system allows employees and administrators to manage customers, create invoices, handle product inventory, and track orders — all from a single, user-friendly dashboard.
 
 ---
 
-## 🧱 Tech Stack
+## 🧱 Core Features
 
-- **Backend:** Laravel 12 (PHP 8+)
+- **Role-Based Access Control (RBAC):** Separate access levels for Admins, Managers, and Employees.  
+- **Customer Management:** Create and maintain customer records with contact and order history.  
+- **Invoice Creation:** Generate and manage invoices with automatic tax calculations.  
+- **Order Tracking:** Track product orders per customer or employee.  
+- **Inventory Control:** Manage available stock, product details, and reorder thresholds.  
+- **Modern UI:** Built with Vue 3 + Tailwind for a fast and responsive experience.
+
+---
+
+## ⚙️ Tech Stack
+
+- **Backend:** Laravel 12 (PHP 8.2+)
 - **Frontend:** Vue.js 3 with Inertia.js
 - **Styling:** Tailwind CSS
-- **Database:** MySQL
-- **Authentication:** Laravel Breeze (with role-based access control - RBAC)
+- **Database:** MySQL / MariaDB
+- **Authentication:** Laravel Breeze with role management
 
 ---
 
-## 🚀 Features
-
-- **User Authentication:** Secure registration and login using Laravel Breeze.
-- **Role-Based Access Control (RBAC):** Admin, Manager, and Employee roles with permission-based access.
-- **Customer Management:** Create, update, and track customer profiles.
-- **Invoice Management:** Generate and view invoices with VAT calculation.
-- **Order Tracking:** Each employee can manage their own invoices and customer orders.
-- **Search & Filters:** Quickly find customers, invoices, or orders.
-- **Responsive Design:** Works smoothly on desktop and mobile.
-
----
-
-## ⚙️ Prerequisites
-
-Before setting up, make sure you have:
-
-- **PHP 8.2+** (Laravel 12 requires PHP 8.2 or newer)
-- **Composer** (latest version)
-- **Node.js & npm** (recommended Node 18+)
-- **MySQL / MariaDB**
-- **Git**
-
-> Optional but helpful: VS Code with extensions  
-> - Laravel Blade Snippets  
-> - PHP Intelephense  
-> - Vue Language Features (Volar)
-
----
-
-## 🧩 Installation & Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/<your-username>/<your-repo-name>.git
-   cd <your-repo-name>
-2. **Install dependencies**
-   composer install
-   npm install
-# 🧩 Setup Guide
+## 🧩 Setup Guide
 
 ### ⚙️ Set up environment
 ```bash
 cp .env.example .env
 php artisan key:generate
-✨ Author
+🛠 Configure database
+Edit the .env file and update your database credentials accordingly.
+```
+### 📦 Run migrations
+bash
+Copy code
+php artisan migrate
 
+### 🚀 Start the development server
+bash
+Copy code
+php artisan serve
+npm run dev
+
+🌐 Open your browser at:
+👉 http://localhost:8000
+
+### ✨ Author
 Developed by hassixmalik
-
 Built with ❤️ using Laravel & Vue.js
