@@ -13,6 +13,7 @@ import { ArrowLeft } from 'lucide-vue-next';
 const form = useForm({
   name: '',
   price: '',
+  qty: '',
   description: '',
 })
 
@@ -41,12 +42,17 @@ const handleSubmit = () => {
                     <div class="mb-3">
                         <Label  class="mb-2" for="Product name">Product Name</Label>
                         <Input type="text" v-model="form.name" placeholder="Name"></Input>
-                        <div class="text-sm text-red" v-if="form.errors.name">{{ form.errors.name }}</div>
+                        <div class="text-sm text-red-500" v-if="form.errors.name">{{ form.errors.name }}</div>
                     </div>
                     <div class="mb-3">
                         <Label class="mb-2" for="Product price">Price</Label>
                         <Input type="number" step=".01" v-model="form.price" placeholder="Price"></Input>
-                        <div class="text-sm text-red" v-if="form.errors.price">{{ form.errors.price }}</div>
+                        <div class="text-sm text-red-500" v-if="form.errors.price">{{ form.errors.price }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <Label class="mb-2" for="Product qty">QTY</Label>
+                        <Input type="number" v-model="form.qty" placeholder="Quantity"></Input>
+                        <div class="text-sm text-red-500" v-if="form.errors.qty">{{ form.errors.qty }}</div>
                     </div>
                     <div class="mb-3">
                         <Label  class="mb-2" for="Product description">Description</Label>
