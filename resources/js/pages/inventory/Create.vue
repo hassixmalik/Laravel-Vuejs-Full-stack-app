@@ -58,7 +58,7 @@ const handleSubmit = () => {
                         <Label  class="mb-2" for="Product description">Description</Label>
                         <Textarea v-model="form.description" placeholder="Description of the Product"></Textarea>
                     </div>
-                    <Button type="submit">Add Product</Button>
+                    <Button type="submit" :disabled="form.processing">Add Product</Button>
                 </div>
             </form>
         </div>

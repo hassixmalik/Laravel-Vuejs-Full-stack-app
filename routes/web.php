@@ -22,6 +22,8 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
     Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
     Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+    Route::get('/inventory/{product}/edit', [InventoryController::class, 'edit'])->name('inventory.edit');
+    Route::put('/inventory/{product}', [InventoryController::class, 'update'])->name('inventory.update');
 
     //Invoice routes
     Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');

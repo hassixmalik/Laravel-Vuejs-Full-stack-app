@@ -7,11 +7,30 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table'
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Rocket } from 'lucide-vue-next';
+
+const page = usePage()
+
+interface Product {
+  id: number,
+  name: string,
+  price: number,
+  qty: number,
+  description: string
+}
+
+interface Props {
+  products: Product[]
+}
+
+//get props from Inertia
+const props = defineProps<Props>();
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -32,6 +51,15 @@ const breadcrumbs: BreadcrumbItem[] = [
     <div class="p-4">
       <Link href="/inventory/create"><Button>Add Product</Button></Link>
     </div>
+    <div v-if="page.props.flash?.message" class="alert p-2">
+      <Alert class="bg-blue-200">
+        <Rocket class="h-4 w-4" />
+        <AlertTitle>Notification!</AlertTitle>
+        <AlertDescription>
+          {{ page.props.flash.message }}
+        </AlertDescription>
+      </Alert>
+    </div>
     <Table>
       <TableCaption>Products List.</TableCaption>
       <TableHeader>
@@ -39,51 +67,28 @@ const breadcrumbs: BreadcrumbItem[] = [
           <TableHead class="w-[100px]">
             Product ID
           </TableHead>
-          <TableHead>Type</TableHead>
+          <TableHead>Name</TableHead>
           <TableHead>QTY</TableHead>
-          <TableHead>Last Update</TableHead>
-          <TableHead class="text-right">
+          <TableHead>
             Amount
           </TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow>
+        <TableRow v-for="product in props.products" :key="product.id">
           <TableCell class="font-medium">
-            P002
+            {{ product.id }}
           </TableCell>
-          <TableCell>Home Appliance</TableCell>
-          <TableCell>30 pc</TableCell>
-          <TableCell>10/03/2025</TableCell>
-          <TableCell class="text-right">
-            BD 250.00
+          <TableCell>{{ product.name }}</TableCell>
+          <TableCell>{{ product.qty }}</TableCell>
+          <TableCell>
+            BD {{ product.price }}
           </TableCell>
-          <TableCell><Button>edit</Button></TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell class="font-medium">
-            P003
+          <TableCell>
+            <Link :href="`/inventory/${product.id}/edit`"><Button class="bg-slate-600 px-2">Edit</Button></Link>
+            <Link :href="`/inventory/${product.id}/edit`"><Button class="bg-red-400 px-2 mx-2">Delete</Button></Link>
           </TableCell>
-          <TableCell>Electrical</TableCell>
-          <TableCell>56 pc</TableCell>
-          <TableCell>19/10/2025</TableCell>
-          <TableCell class="text-right">
-            BD 250.00
-          </TableCell>
-          <TableCell><Button>edit</Button></TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell class="font-medium">
-            P002
-          </TableCell>
-          <TableCell>Home Appliance</TableCell>
-          <TableCell>30 pc</TableCell>
-          <TableCell>10/03/2025</TableCell>
-          <TableCell class="text-right">
-            BD 250.00
-          </TableCell>
-          <TableCell><Button>edit</Button></TableCell>
         </TableRow>
       </TableBody>
     </Table>
