@@ -24,19 +24,9 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Inventory',
-        href: '/inventory',
-        icon: Warehouse,
-    },
-    {
         title: 'Orders',
         href: '/orders',
         icon: Package,
-    },
-    {
-        title: 'Customers',
-        href: '/customer',
-        icon: UserRoundSearch,
     },
     {
         title: 'Invoices',
@@ -47,6 +37,16 @@ const mainNavItems: NavItem[] = [
         title: 'Delivery',
         href: '/delivery',
         icon: PackageOpen,
+    },
+    {
+        title: 'Customers',
+        href: '/customer',
+        icon: UserRoundSearch,
+    },
+    {
+        title: 'Inventory',
+        href: '/inventory',
+        icon: Warehouse,
     },
 ];
 
