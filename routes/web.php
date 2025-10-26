@@ -3,6 +3,7 @@
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -24,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
     Route::get('/inventory/{product}/edit', [InventoryController::class, 'edit'])->name('inventory.edit');
     Route::put('/inventory/{product}', [InventoryController::class, 'update'])->name('inventory.update');
+    Route::delete('/inventory/{product}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
 
     //Invoice routes
     Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');
@@ -33,6 +35,12 @@ Route::middleware(['auth', 'verified'])->group(function(){
     //Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/createOrder', [OrderController::class, 'create'])->name('orders.create');
+
+    //Customer Routes
+    Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
+    Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');
+    Route::post('/customer', [CustomerController::class, 'store'])->name('customer.store');
+    Route::get('/customer/{customer}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
 
 });
 
