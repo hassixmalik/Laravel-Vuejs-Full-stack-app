@@ -4,7 +4,7 @@ import Input from '@/components/ui/input/Input.vue';
 import Label from '@/components/ui/label/Label.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3'
 import { ArrowLeft } from 'lucide-vue-next';
 import {
@@ -31,6 +31,10 @@ const form = useForm({
 
 const handleSubmit = () => {
     form.put(`/inventory/${props.product.id}`);
+}
+
+const handleDelete = (id: number) => {
+    router.delete(`/inventory/${id}`);
 }
 </script>
 
@@ -79,7 +83,7 @@ const handleSubmit = () => {
                 </div>
                 <Dialog>
                     <DialogTrigger as-child>
-                        <Button variant="destructive">Delete account</Button>
+                        <Button variant="destructive">Delete product</Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader class="space-y-3">
@@ -87,10 +91,9 @@ const handleSubmit = () => {
                             <DialogDescription>
                                 Once your product is deleted, all of its
                                 resources and data will also be permanently
-                                deleted. Please enter your password to confirm
-                                you would like to permanently delete your
-                                account.
+                                deleted.
                             </DialogDescription>
+                            <Button @click="handleDelete(props.product.id)" class="bg-red-400">Delete</Button>
                         </DialogHeader>
                     </DialogContent>
                 </Dialog>

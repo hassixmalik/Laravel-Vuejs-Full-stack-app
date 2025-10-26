@@ -38,28 +38,28 @@ const handleSubmit = () => {
                 <Link href="/inventory/"><Button><ArrowLeft></ArrowLeft></Button></Link>
             </div>
             <form @submit.prevent="handleSubmit">
-                <div>
-                    <div class="mb-3">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
                         <Label  class="mb-2" for="Product name">Product Name</Label>
                         <Input type="text" v-model="form.name" placeholder="Name"></Input>
                         <div class="text-sm text-red-500" v-if="form.errors.name">{{ form.errors.name }}</div>
                     </div>
-                    <div class="mb-3">
+                    <div>
                         <Label class="mb-2" for="Product price">Price</Label>
                         <Input type="number" step=".01" v-model="form.price" placeholder="Price"></Input>
                         <div class="text-sm text-red-500" v-if="form.errors.price">{{ form.errors.price }}</div>
                     </div>
-                    <div class="mb-3">
+                    <div>
                         <Label class="mb-2" for="Product qty">QTY</Label>
                         <Input type="number" v-model="form.qty" placeholder="Quantity"></Input>
                         <div class="text-sm text-red-500" v-if="form.errors.qty">{{ form.errors.qty }}</div>
                     </div>
-                    <div class="mb-3">
+                    <div>
                         <Label  class="mb-2" for="Product description">Description</Label>
-                        <Textarea v-model="form.description" placeholder="Description of the Product"></Textarea>
+                        <Textarea v-model="form.description" placeholder="Description of the Product (Optional)"></Textarea>
                     </div>
-                    <Button type="submit" :disabled="form.processing">Add Product</Button>
                 </div>
+                <Button type="submit" :disabled="form.processing">Add Product</Button>
             </form>
         </div>
     </AppLayout>

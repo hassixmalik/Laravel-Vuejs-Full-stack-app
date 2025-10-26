@@ -13,7 +13,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Rocket } from 'lucide-vue-next';
+import { Rocket, SquarePen } from 'lucide-vue-next';
 
 const page = usePage()
 
@@ -86,8 +86,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             BD {{ product.price }}
           </TableCell>
           <TableCell>
-            <Link :href="`/inventory/${product.id}/edit`"><Button class="bg-slate-600 px-2">Edit</Button></Link>
-            <Link :href="`/inventory/${product.id}/edit`"><Button class="bg-red-400 px-2 mx-2">Delete</Button></Link>
+            <Link :href="`/inventory/${product.id}/edit`"><Button class="bg-slate-600"><SquarePen /></Button></Link>
           </TableCell>
         </TableRow>
       </TableBody>

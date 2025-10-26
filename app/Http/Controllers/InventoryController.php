@@ -11,9 +11,11 @@ class InventoryController extends Controller
         $products = Product::latest()->get();
         return Inertia::render('inventory/Index', compact('products'));
     }
+    
     public function create(){
         return Inertia::render('inventory/Create');
     }
+    
     public function store(Request $request){
         $data = $request->validate([
             'name' => 'required|string',
@@ -44,5 +46,10 @@ class InventoryController extends Controller
             'description' => $request->input('description'),
         ]);
         return redirect()->route('inventory.index')->with('message', 'Product updated successfully');
+    }
+
+    public function destroy(Product $product){
+        $product->delete();
+        return redirect()->route('inventory.index')->with('message', 'Product deleted successfully');
     }
 }
