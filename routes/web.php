@@ -35,12 +35,15 @@ Route::middleware(['auth', 'verified'])->group(function(){
     //Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/createOrder', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 
     //Customer Routes
     Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
     Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');
     Route::post('/customer', [CustomerController::class, 'store'])->name('customer.store');
     Route::get('/customer/{customer}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
+    Route::put('/customer/{customer}', [CustomerController::class, 'update'])->name('inventory.update');
+
 
 });
 

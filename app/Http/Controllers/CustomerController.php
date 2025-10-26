@@ -32,4 +32,25 @@ class CustomerController extends Controller
     public function edit(Customer $customer){
         return Inertia::render('customer/Edit', compact('customer'));
     }
+
+    public function update(Request $request, Customer $customer){
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
+            'phone' => 'required|string|min:0',
+            'is_active' => 'required|boolean',
+            'city' => 'nullable|string',
+            'address' => 'nullable|string|max:1000',
+        ]);
+
+        $customer->update([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'is_active' => $request->input('is_active'),
+            'city' => $request->input('city'),
+            'address' => $request->input('address'),
+        ]);
+        return redirect()->route('customer.index')->with('message', 'Customer updated successfully');
+    }
 }

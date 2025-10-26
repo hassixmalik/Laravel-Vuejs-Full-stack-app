@@ -15,7 +15,7 @@ import {
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { Rocket, SquarePen, Dot } from 'lucide-vue-next';
+import { Rocket, SquarePen } from 'lucide-vue-next';
 const page = usePage()
 
 interface Customer {
