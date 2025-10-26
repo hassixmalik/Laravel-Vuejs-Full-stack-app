@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Controllers;
+use Inertia\Inertia;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+
+class CustomerController extends Controller
+{
+    public function index(){
+        $customers = Customer::latest()->get();
+        return Inertia::render('customer/Index', compact('customers'));
+    }
+
+    public function create(){
+        return Inertia::render('customer/Create');
+    }
+
+    public function store(Request $request){
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
+            'phone' => 'required|string|min:0',
+            'is_active' => 'required|boolean',
+            'city' => 'nullable|string',
+            'address' => 'nullable|string|max:1000',
+        ]);
+        Customer::create($data);
+        return redirect()->route('customer.index')->with('message', 'Customer added successfully');
+    }
+
+    public function edit(Customer $customer){
+        return Inertia::render('customer/Edit', compact('customer'));
+    }
+}
