@@ -46,7 +46,7 @@ const handleSubmit = () => {
                     </div>
                     <div>
                         <Label class="mb-2" for="Product price">Price</Label>
-                        <Input type="number" step=".01" v-model="form.price" placeholder="Price"></Input>
+                        <Input type="number" step="0.001" v-model="form.price" placeholder="Price"></Input>
                         <div class="text-sm text-red-500" v-if="form.errors.price">{{ form.errors.price }}</div>
                     </div>
                     <div>
