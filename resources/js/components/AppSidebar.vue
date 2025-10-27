@@ -34,11 +34,6 @@ const mainNavItems: NavItem[] = [
         icon: Newspaper,
     },
     {
-        title: 'Delivery',
-        href: '/delivery',
-        icon: PackageOpen,
-    },
-    {
         title: 'Customers',
         href: '/customer',
         icon: UserRoundSearch,
@@ -47,6 +42,11 @@ const mainNavItems: NavItem[] = [
         title: 'Inventory',
         href: '/inventory',
         icon: Warehouse,
+    },
+    {
+        title: 'Delivery',
+        href: '/delivery',
+        icon: PackageOpen,
     },
 ];
 
