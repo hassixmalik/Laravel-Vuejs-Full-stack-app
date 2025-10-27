@@ -31,11 +31,15 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice.index');
     Route::get('/invoice/detail', [InvoiceController::class, 'detail'])->name('invoice.detail');
     Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('invoice.create');
+    Route::post('/invoice', [InvoiceController::class, 'store'])->name('invoice.store');
+    Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('invoice.show');
 
     //Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/createOrder', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
+    Route::put('/orders/{order}',       [OrderController::class, 'update'])->name('orders.update');
 
     //Customer Routes
     Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
