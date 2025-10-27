@@ -12,7 +12,36 @@ import {
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
+// import SearchableSelect from '@/components/SearchableSelect.vue'
 
+// ✅ ADD: props typing for invoices list
+type InvoiceStatus = 'draft' | 'issued' | 'void'
+
+type InvoiceRow = {
+  id: number
+  invoice_no: string
+  order_no: number
+  customer: string
+  created_by: string
+  status: InvoiceStatus
+  subtotal: string
+  discount: string
+  total: string
+  created_at: string
+}
+
+type LinkItem = { url: string | null; label: string; active: boolean }
+
+type Paginated<T> = {
+  data: T[]
+  links: LinkItem[]
+}
+
+interface Props {
+  invoices: Paginated<InvoiceRow>
+}
+
+const props = defineProps<Props>()
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -20,8 +49,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/invoice',
   },
 ];
-
-
 </script>
 
 <template>
@@ -32,48 +59,46 @@ const breadcrumbs: BreadcrumbItem[] = [
     <div class="p-4">
       <Link href="/invoice/create"><Button>Add Invoice</Button></Link>
     </div>
+
     <Table>
       <TableCaption>A list of your recent invoices.</TableCaption>
+
       <TableHeader>
         <TableRow>
-          <TableHead class="w-[100px]">
-            Invoice
-          </TableHead>
+          <TableHead class="w-[100px]">Invoice #</TableHead>
+          <TableHead>Order #</TableHead>
+          <TableHead>Customer</TableHead>
+          <TableHead>Created By</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>To</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead class="text-right">
-            Amount
-          </TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead class="text-right">Subtotal</TableHead>
+          <TableHead class="text-right">Discount</TableHead>
+          <TableHead class="text-right">Total</TableHead>
+          <TableHead>Created At</TableHead>
+          <TableHead class="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
+
       <TableBody>
-        <TableRow>
-          <TableCell class="font-medium">
-            INV001
+        <TableRow v-for="row in props.invoices.data" :key="row.id">
+          <TableCell class="font-medium">{{ row.invoice_no }}</TableCell>
+          <TableCell>#{{ row.order_no }}</TableCell>
+          <TableCell>{{ row.customer }}</TableCell>
+          <TableCell>{{ row.created_by }}</TableCell>
+          <TableCell
+            :class="row.status === 'issued' ? 'text-green-600' : row.status === 'draft' ? 'text-yellow-600' : 'text-red-600'">
+            {{ row.status }}
           </TableCell>
-          <TableCell>Paid</TableCell>
-          <TableCell>Mr. Abdullah</TableCell>
-          <TableCell>Credit Card</TableCell>
-          <TableCell class="text-right">
-            BD 250.00
+          <TableCell class="text-right">{{ row.subtotal }}</TableCell>
+          <TableCell class="text-right">{{ row.discount }}</TableCell>
+          <TableCell class="text-right">{{ row.total }}</TableCell>
+          <TableCell>{{ row.created_at }}</TableCell>
+          <TableCell class="text-center">
+            <Link :href="`/invoice/${row.id}`"><Button>View</Button></Link>
           </TableCell>
-          <TableCell><Link href="/invoice/detail"><Button>view</Button></Link></TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell class="font-medium">
-            INV002
-          </TableCell>
-          <TableCell>Unpaid</TableCell>
-          <TableCell>ABC</TableCell>
-          <TableCell>Credit Card</TableCell>
-          <TableCell class="text-right">
-            BD 250.00
-          </TableCell>
-          <TableCell><Link href="/invoice/detail"><Button>view</Button></Link></TableCell>
         </TableRow>
       </TableBody>
+
     </Table>
+
   </AppLayout>
 </template>
