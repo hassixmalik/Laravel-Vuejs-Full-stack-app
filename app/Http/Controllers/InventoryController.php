@@ -8,6 +8,7 @@ use App\Models\Product;
 class InventoryController extends Controller
 {
     public function index(){
+
         $products = Product::where('is_active', true)  // getting only active products
         ->latest()
         ->get();

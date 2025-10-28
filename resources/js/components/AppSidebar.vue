@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Warehouse, Newspaper, UserRoundSearch, Package, PackageOpen} from 'lucide-vue-next';
+import { LayoutGrid, Warehouse, Newspaper, UserRoundSearch, Package} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -24,14 +24,14 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Orders',
-        href: '/orders',
-        icon: Package,
-    },
-    {
         title: 'Invoices',
         href: '/invoice',
         icon: Newspaper,
+    },
+    {
+        title: 'Orders',
+        href: '/orders',
+        icon: Package,
     },
     {
         title: 'Customers',
@@ -42,11 +42,6 @@ const mainNavItems: NavItem[] = [
         title: 'Inventory',
         href: '/inventory',
         icon: Warehouse,
-    },
-    {
-        title: 'Delivery',
-        href: '/delivery',
-        icon: PackageOpen,
     },
 ];
 

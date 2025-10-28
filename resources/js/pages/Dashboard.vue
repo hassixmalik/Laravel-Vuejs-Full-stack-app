@@ -74,8 +74,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
             <h1>Find Useful Links</h1>
             <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-                <a
-                    class="hover:bg-neutral-100 cursor-pointer relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                <a href="/inventory" class="hover:bg-neutral-100 cursor-pointer relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                     <div class="p-2">
                         <Warehouse class="mb-2" />
                         <div class="text-lg">
@@ -86,7 +85,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                     </div>
                 </a>
-                <div
+                <a href="/customer" 
                     class="hover:bg-neutral-100 cursor-pointer relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                     <div class="p-2">
                         <UserRoundSearch class="mb-2" />
@@ -97,8 +96,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                             Add customers, Disabled old customers or create new.
                         </div>
                     </div>
-                </div>
-                <div
+                </a>
+                <a href="/orders" 
                     class="hover:bg-neutral-100 cursor-pointer relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                     <div class="p-2">
                         <Package class="mb-2" />
@@ -109,14 +108,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                             Create orders for customers and Manage them.
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
             <div class="bg-white dark:bg-gray-900 p-4 rounded-xl shadow">
                 <LineChart :data="data" index="month" :categories="['Orders Total', 'Invoices Total']"
                     :colors="['#2563EB', '#10B981']"
                     :y-formatter="(tick) => {
                     return typeof tick === 'number'
-                    ? `SAR ${new Intl.NumberFormat('en-US', {
+                    ? `BD ${new Intl.NumberFormat('en-US', {
                     minimumFractionDigits: 3,
                     maximumFractionDigits: 3
                     }).format(tick)}`

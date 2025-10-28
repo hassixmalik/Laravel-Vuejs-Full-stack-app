@@ -33,6 +33,13 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('invoice.create');
     Route::post('/invoice', [InvoiceController::class, 'store'])->name('invoice.store');
     Route::get('/invoice/{invoice}', [InvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('/invoice/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoice.edit');
+    Route::put('/invoice/{invoice}',       [InvoiceController::class, 'update'])->name('invoice.update');
+    Route::delete('/invoice/{invoice}', [InvoiceController::class, 'destroy'])->name('invoice.destroy');
+    Route::post('/orders/{order}/convert-to-invoice', [InvoiceController::class, 'convertFromOrder'])->name('orders.convertToInvoice');
+    
+    // Email Route
+    Route::post('/invoice/{invoice}/email', [InvoiceController::class, 'email'])->name('invoice.email');
 
     //Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
