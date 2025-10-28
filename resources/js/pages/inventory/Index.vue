@@ -22,7 +22,7 @@ interface Product {
   name: string,
   price: number,
   qty: number,
-  description: string
+  description: string,
 }
 
 interface Props {

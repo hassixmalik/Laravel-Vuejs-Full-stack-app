@@ -89,9 +89,7 @@ const handleDelete = (id: number) => {
                         <DialogHeader class="space-y-3">
                             <DialogTitle>Are you sure you want to delete this product</DialogTitle>
                             <DialogDescription>
-                                Once your product is deleted, all of its
-                                resources and data will also be permanently
-                                deleted.
+                                It won't have an effect on orders that have been created previously. This action can not be undone.
                             </DialogDescription>
                             <Button @click="handleDelete(props.product.id)" class="bg-red-400">Delete</Button>
                         </DialogHeader>

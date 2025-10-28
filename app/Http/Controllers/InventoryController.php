@@ -8,7 +8,9 @@ use App\Models\Product;
 class InventoryController extends Controller
 {
     public function index(){
-        $products = Product::latest()->get();
+        $products = Product::where('is_active', true)  // getting only active products
+        ->latest()
+        ->get();
         return Inertia::render('inventory/Index', compact('products'));
     }
     
@@ -48,8 +50,18 @@ class InventoryController extends Controller
         return redirect()->route('inventory.index')->with('message', 'Product updated successfully');
     }
 
-    public function destroy(Product $product){
-        $product->delete();
-        return redirect()->route('inventory.index')->with('message', 'Product deleted successfully');
+    public function destroy(Product $product)
+    {
+        //better to add check if product is already inactive
+        if (!$product->is_active) {
+            return back()->with('message', 'Product is already inactive.');
+        }
+
+        $product->update(['is_active' => false]);
+
+        return redirect()
+            ->route('inventory.index')
+            ->with('message', 'Product disabled successfully');
     }
+
 }
