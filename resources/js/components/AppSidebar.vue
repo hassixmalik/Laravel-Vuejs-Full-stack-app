@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, LayoutGrid, Warehouse, Newspaper, UserRoundSearch, Package, PackageOpen} from 'lucide-vue-next';
+import { LayoutGrid, Warehouse, Newspaper, UserRoundSearch, Package, PackageOpen} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -52,9 +52,8 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
+        title: 'Built for 🌍 by hassixmalik',
+        href: 'https://github.com/hassixmalik/Laravel-Vuejs-Full-stack-app'
     },
 ];
 </script>
