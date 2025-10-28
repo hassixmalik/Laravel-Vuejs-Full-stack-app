@@ -119,7 +119,7 @@ const handleDelete = (id: number) => {
                         </div>
                     </div>
                 </div>
-                <Button type="submit" :disabled="form.processing" class="mt-4">Edit Customer</Button>
+                <Button type="submit" :disabled="form.processing" class="mt-4">Update</Button>
             </form>
             <div
                 class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">

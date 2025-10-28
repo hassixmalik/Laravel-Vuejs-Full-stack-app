@@ -39,13 +39,24 @@ class OrderController extends Controller
         
     public function create()
     {
-        $customerOptions = Customer::select('id','name')
-            ->orderBy('name')->get()
+        
+        $customerOptions = Customer::query()
+            ->where('is_active', true)        //only active customers      
+            ->orderBy('name')
+            ->get(['id','name'])
             ->map(fn($c) => ['label' => $c->name, 'value' => $c->id]);
 
-        $productOptions = Product::select('id','name', 'price', 'qty')
-            ->orderBy('name')->get()
-            ->map(fn($p) => ['label' => $p->name, 'value' => $p->id, 'price' => (float) $p->price, 'stock' => (int) $p->qty,],);
+
+        $productOptions = Product::query()
+            ->where('is_active', true)       // only active products
+            ->orderBy('name')
+            ->get(['id', 'name', 'price', 'qty'])
+            ->map(fn($p) => [
+                'label' => $p->name,
+                'value' => $p->id,
+                'price' => (float) $p->price,
+                'stock' => (int) $p->qty,
+            ]);
 
         return Inertia::render('orders/Create', [
             'customerOptions' => $customerOptions,
@@ -142,18 +153,24 @@ class OrderController extends Controller
     public function edit(Order $order)
     {
         // for edit method i just need to send same options/values i sent for create-orders page
-        $customerOptions = Customer::select('id','name')
-            ->orderBy('name')->get()
+        // edit()
+        $customerOptions = Customer::query()
+            ->where('is_active', true)              // only active customers
+            ->orderBy('name')
+            ->get(['id','name'])
             ->map(fn($c) => ['label' => $c->name, 'value' => $c->id]);
 
-        $productOptions = Product::select('id','name','price','qty')
-            ->orderBy('name')->get()
+        $productOptions = Product::query()
+            ->where('is_active', true)       // only active products
+            ->orderBy('name')
+            ->get(['id', 'name', 'price', 'qty'])
             ->map(fn($p) => [
                 'label' => $p->name,
                 'value' => $p->id,
                 'price' => (float) $p->price,
                 'stock' => (int) $p->qty,
             ]);
+
 
         $order->load(['items:id,order_id,product_id,qty,unit_total', 'customer:id,name', 'placedBy:id,name']);
 

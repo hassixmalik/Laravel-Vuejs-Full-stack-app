@@ -9,12 +9,29 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import type { AppPageProps as AppPageProps } from '@/types'
-import { Eye, SquarePen} from 'lucide-vue-next';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import type { AppPageProps as AppPageProps } from '@/types';
+import { SquarePen, FileInput, Rocket } from 'lucide-vue-next';
+import Alert from '@/components/ui/alert/Alert.vue';
+import AlertTitle from '@/components/ui/alert/AlertTitle.vue';
+import AlertDescription from '@/components/ui/alert/AlertDescription.vue';
 
+const convertForm = useForm({});
+
+function convertOrder(orderId: number) {
+  convertForm.post(`/orders/${orderId}/convert-to-invoice`)
+}
 
 type OrderRow = {
   id: number
@@ -56,6 +73,15 @@ const breadcrumbs: BreadcrumbItem[] = [
     <div class="p-4">
       <Link href="/orders/createOrder"><Button>Create Order</Button></Link>
     </div>
+    <div v-if="page.props.flash?.message" class="alert p-2">
+      <Alert class="bg-blue-200">
+        <Rocket class="h-4 w-4" />
+        <AlertTitle>Notification!</AlertTitle>
+        <AlertDescription>
+          {{ page.props.flash.message }}
+        </AlertDescription>
+      </Alert>
+    </div>
     <Table>
       <TableCaption>Orders List.</TableCaption>
 
@@ -80,8 +106,32 @@ const breadcrumbs: BreadcrumbItem[] = [
           <TableCell class="tabular-nums">BD {{ o.total }}</TableCell>
           <TableCell>{{ o.created_at }}</TableCell>
           <TableCell class="text-center">
-            <Button class="bg-blue-400 mx-1"><Eye /></Button>
-            <Link :href="`/orders/${o.id}/edit`"><Button class="bg-slate-400 mx-1"><SquarePen /></Button></Link>
+            <Dialog>
+              <DialogTrigger as-child>
+                <Button variant="outline">
+                  <FileInput />
+                </Button>
+              </DialogTrigger>
+              <DialogContent class="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Convert to Invoice</DialogTitle>
+                  <DialogDescription>
+                    By clicking 'convert', order will be converted into an invoice that can be sent to Customer via
+                    Email
+                  </DialogDescription>
+                </DialogHeader>
+                <div>Do you want to convert order#{{ o.id }} into Invoice?</div>
+                <form @submit.prevent="convertOrder(o.id)">
+                  <Button type="submit" :disabled="convertForm.processing">
+                    <span v-if="convertForm.processing">Converting...</span>
+                    <span v-else>Convert</span>
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+            <Link :href="`/orders/${o.id}/edit`"><Button class="bg-slate-400 mx-1">
+              <SquarePen />
+            </Button></Link>
           </TableCell>
         </TableRow>
       </TableBody>
