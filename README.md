@@ -6,11 +6,10 @@ This system allows employees and administrators to manage customers, create invo
 ---
 
 ## 🧱 Core Features
-
-- **Role-Based Access Control (RBAC):** Separate access levels for Admins, Managers, and Employees.  
+ 
 - **Customer Management:** Create and maintain customer records with contact and order history.  
 - **Invoice Creation:** Generate and manage invoices with automatic tax calculations.  
-- **Order Tracking:** Track product orders per customer or employee.  
+- **Order Creation:** Create product orders per customer.  
 - **Inventory Control:** Manage available stock, product details, and reorder thresholds.  
 - **Modern UI:** Built with Vue 3 + Tailwind for a fast and responsive experience.
 
