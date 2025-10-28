@@ -104,9 +104,9 @@ const total = subtotal + tax
                 </table>
 
                 <div class="text-right">
-                    <p>Subtotal: {{ subtotal.toFixed(2) }} SAR</p>
-                    <p>VAT ({{ (invoice.tax_rate * 100).toFixed(0) }}%): {{ tax.toFixed(2) }} SAR</p>
-                    <p class="font-bold text-lg">Total: {{ total.toFixed(2) }} SAR</p>
+                    <p>Subtotal: {{ subtotal.toFixed(2) }} BD</p>
+                    <p>VAT ({{ (invoice.tax_rate * 100).toFixed(0) }}%): {{ tax.toFixed(2) }} BD</p>
+                    <p class="font-bold text-lg">Total: {{ total.toFixed(2) }} BD</p>
                 </div>
             </div>
         </div>

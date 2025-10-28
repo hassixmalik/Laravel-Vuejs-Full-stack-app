@@ -2,9 +2,19 @@
 import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft, Printer, SquarePen } from 'lucide-vue-next';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ArrowLeft, Printer, SquarePen, Send, Rocket, Trash } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import { useForm } from '@inertiajs/vue3'
+import Alert from '@/components/ui/alert/Alert.vue';
+import AlertTitle from '@/components/ui/alert/AlertTitle.vue';
+import AlertDescription from '@/components/ui/alert/AlertDescription.vue';
+import Dialog from '@/components/ui/dialog/Dialog.vue';
+import DialogTrigger from '@/components/ui/dialog/DialogTrigger.vue';
+import DialogContent from '@/components/ui/dialog/DialogContent.vue';
+import DialogHeader from '@/components/ui/dialog/DialogHeader.vue';
+import DialogTitle from '@/components/ui/dialog/DialogTitle.vue';
+
 
 type InvoiceItem = {
   id: number
@@ -71,25 +81,78 @@ function printInvoice() {
   w.print();
   w.close();
 }
+
+const emailForm = useForm({})
+
+function sendByEmail(id: number) {
+  emailForm.post(`/invoice/${id}/email`)
+}
+const handleDelete = (id: number) => {
+  router.delete(`/invoice/${id}`);
+}
 </script>
 
 <template>
+
   <Head :title="`Invoice #${invoice.id}`" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex justify-between items-center p-4">
       <div>
         <Link href="/invoice">
-          <Button><ArrowLeft /></Button>
+        <Button>
+          <ArrowLeft />
+        </Button>
         </Link>
       </div>
 
       <div class="space-x-2">
-        <Button @click="printInvoice"><Printer /></Button>
-        <Link :href="`/invoice/${invoice.id}/edit`">
-          <Button><SquarePen /></Button>
-        </Link>
+        <Button @click="printInvoice">
+          <Printer />
+        </Button>
+        <Link :href="`/invoice/${invoice.id}/edit`"><Button class="bg-slate-600">
+          <SquarePen />
+        </Button></Link>
+        <Dialog>
+          <DialogTrigger as-child>
+            <Button class="bg-red-400" :disabled="invoice.status === 'issued'">
+              <Trash />
+            </Button>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Delete Invoice</DialogTitle>
+            </DialogHeader>
+            <div>Do you want to delete Invoice#{{ invoice.id }}?</div>
+            <DialogFooter>
+              <Button class="bg-red-500" @click="handleDelete(invoice.id)">
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
       </div>
+      <form @submit.prevent="sendByEmail(invoice.id)">
+        <Button type="submit" :disabled="emailForm.processing" class="bg-blue-600 hover:bg-blue-700">
+          <span v-if="emailForm.processing">Sending...</span>
+          <span v-else>Email</span><span>
+            <Send class="w-4" />
+          </span>
+        </Button>
+      </form>
+    </div>
+    <div v-if="$page.props.errors?.email" class="p-2 text-sm text-red-600">
+      {{ $page.props.errors.email }}
+    </div>
+    <div v-if="$page.props.flash?.message" class="p-2 text-sm text-green-600">
+      <Alert class="bg-blue-200">
+        <Rocket class="h-4 w-4" />
+        <AlertTitle>Notification!</AlertTitle>
+        <AlertDescription>
+          {{ $page.props.flash.message }}
+        </AlertDescription>
+      </Alert>
     </div>
 
     <div class="flex justify-center">
@@ -101,9 +164,10 @@ function printInvoice() {
           <p><strong>Date:</strong> {{ invoice.date ?? '—' }}</p>
           <p><strong>Due Date:</strong> {{ invoice.due_date ?? '—' }}</p>
           <p>
-            <strong>Status:</strong>
-            <span :class="invoice.status === 'issued' ? 'text-green-600' : invoice.status === 'draft' ? 'text-yellow-600' : 'text-red-600'">
-               {{ invoice.status }}
+            <strong>Status</strong>
+            <span
+              :class="invoice.status === 'issued' ? 'text-green-600' : invoice.status === 'draft' ? 'text-yellow-600' : 'text-red-600'">
+              : {{ invoice.status }}
             </span>
           </p>
           <p><strong>Created By:</strong> {{ invoice.created_by }}</p>

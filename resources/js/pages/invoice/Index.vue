@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import Alert from '@/components/ui/alert/Alert.vue';
+import AlertDescription from '@/components/ui/alert/AlertDescription.vue';
+import AlertTitle from '@/components/ui/alert/AlertTitle.vue';
+import type { AppPageProps as AppPageProps } from '@/types';
 import Button from '@/components/ui/button/Button.vue';
 import {
   Table,
@@ -11,11 +15,14 @@ import {
 } from '@/components/ui/table'
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage} from '@inertiajs/vue3';
+import { Rocket } from 'lucide-vue-next';
 // import SearchableSelect from '@/components/SearchableSelect.vue'
 
-// ✅ ADD: props typing for invoices list
-type InvoiceStatus = 'draft' | 'issued' | 'void'
+const page = usePage<AppPageProps>();
+
+// ADD: props typing for invoices list
+type InvoiceStatus = 'draft' | 'issued' | 'void';
 
 type InvoiceRow = {
   id: number
@@ -59,7 +66,15 @@ const breadcrumbs: BreadcrumbItem[] = [
     <div class="p-4">
       <Link href="/invoice/create"><Button>Add Invoice</Button></Link>
     </div>
-
+    <div v-if="page.props.flash?.message" class="alert p-2">
+      <Alert class="bg-blue-200">
+        <Rocket class="h-4 w-4" />
+        <AlertTitle>Notification!</AlertTitle>
+        <AlertDescription>
+          {{ page.props.flash.message }}
+        </AlertDescription>
+      </Alert>
+    </div>
     <Table>
       <TableCaption>A list of your recent invoices.</TableCaption>
 
