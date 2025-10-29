@@ -70,7 +70,7 @@ const handleDelete = (id: number) => {
                         <Label class="mb-2" for="Product description">Description</Label>
                         <Textarea v-model="form.description" placeholder="Description of the Product"></Textarea>
                     </div>
-                    <Button type="submit" :disabled="form.processing">Edit Product</Button>
+                    <Button type="submit" :disabled="form.processing">Update</Button>
                 </div>
             </form>
             <div
