@@ -7,6 +7,9 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Attachment;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+
 // use Illuminate\Contracts\Queue\ShouldQueue; // <- optional if you want to queue
 
 class InvoiceMail extends Mailable /* implements ShouldQueue */
@@ -53,6 +56,12 @@ class InvoiceMail extends Mailable /* implements ShouldQueue */
      */
     public function attachments(): array
     {
-        return [];
+        // Build the same array you pass to the Markdown view (we already have $this->invoice)
+        $pdf = PDF::loadView('pdf.invoice', ['invoice' => $this->invoice])->setPaper('a4');
+
+        return [
+            Attachment::fromData(fn () => $pdf->output(), 'Invoice-'.$this->invoice['id'].'.pdf')
+                ->withMime('application/pdf'),
+        ];
     }
 }

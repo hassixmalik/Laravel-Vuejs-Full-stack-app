@@ -107,7 +107,7 @@ const breadcrumbs: BreadcrumbItem[] = [
           <div class="text-sm"><span class="font-semibold">Discount:</span> {{ form.discount.toFixed(3) }} BD</div>
           <div class="text-sm"><span class="font-semibold">VAT:</span> {{ vatAmount.toFixed(3) }} BD</div>
           <div class="text-sm font-semibold"><span>Total:</span> {{ total.toFixed(3) }} BD</div>
-          <p class="text-xs text-gray-500 mt-2">Totals preview is client-side; server is source of truth on save.</p>
+          <p class="text-xs text-gray-500 mt-2">.</p>
         </div>
 
         <Button type="submit" :disabled="form.processing">Update Invoice</Button>
