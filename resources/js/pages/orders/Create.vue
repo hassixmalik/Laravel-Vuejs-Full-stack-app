@@ -14,7 +14,7 @@ import type { AppPageProps as AppPageProps } from '@/types'
 
 type CreatePageProps = AppPageProps & {
     customerOptions: Array<{ label: string, value: number }>
-    productOptions: Array<{ label: string, value: number, price: number, stock: number }>
+    productOptions: Array<{ label: string, value: number, price: number, available: number }>
     statusOptions: Array<{ label: string, value: string }>
     placedBy: number
     placedByName: string
@@ -83,7 +83,7 @@ const computedTotal = computed(() =>
 function productStock(productId: number | null): number {
     if (productId == null) return 0
     const opt = page.props.productOptions.find(o => o.value === productId)
-    return opt ? Number(opt.stock) : 0
+    return opt ? Number(opt.available) : 0
 }
 
 // true if the line's requested qty exceeds stock

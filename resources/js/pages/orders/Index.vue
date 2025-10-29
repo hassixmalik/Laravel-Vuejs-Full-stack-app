@@ -106,6 +106,9 @@ const breadcrumbs: BreadcrumbItem[] = [
           <TableCell class="tabular-nums">BD {{ o.total }}</TableCell>
           <TableCell>{{ o.created_at }}</TableCell>
           <TableCell class="text-center">
+            <Link :href="`/orders/${o.id}/edit`"><Button class="bg-slate-400 mx-1">
+              <SquarePen />
+            </Button></Link>
             <Dialog>
               <DialogTrigger as-child>
                 <Button variant="outline">
@@ -129,9 +132,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </form>
               </DialogContent>
             </Dialog>
-            <Link :href="`/orders/${o.id}/edit`"><Button class="bg-slate-400 mx-1">
-              <SquarePen />
-            </Button></Link>
           </TableCell>
         </TableRow>
       </TableBody>

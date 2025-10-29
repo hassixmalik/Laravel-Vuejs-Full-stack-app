@@ -8,6 +8,9 @@ use App\Models\OrderItem;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\Reservation;
+use App\Models\StockMovement;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
@@ -39,24 +42,24 @@ class OrderController extends Controller
         
     public function create()
     {
-        
         $customerOptions = Customer::query()
             ->where('is_active', true)        //only active customers      
             ->orderBy('name')
             ->get(['id','name'])
             ->map(fn($c) => ['label' => $c->name, 'value' => $c->id]);
 
-
         $productOptions = Product::query()
-            ->where('is_active', true)       // only active products
+            ->where('is_active', true)
+            ->whereRaw('(qty - reserved) > 0')   // only products with real availability
             ->orderBy('name')
-            ->get(['id', 'name', 'price', 'qty'])
+            ->get(['id','name','price','qty','reserved'])
             ->map(fn($p) => [
-                'label' => $p->name,
-                'value' => $p->id,
-                'price' => (float) $p->price,
-                'stock' => (int) $p->qty,
+                'label'     => $p->name,
+                'value'     => $p->id,
+                'price'     => (float) $p->price,
+                'available' => max((int)$p->qty - (int)$p->reserved, 0),
             ]);
+
 
         return Inertia::render('orders/Create', [
             'customerOptions' => $customerOptions,
@@ -64,7 +67,6 @@ class OrderController extends Controller
             'statusOptions'   => [
                 ['label'=>'Draft','value'=>'draft'],
                 ['label'=>'Placed','value'=>'placed'],
-                ['label'=>'Cancelled','value'=>'cancelled'],
                 ['label'=>'Fulfilled','value'=>'fulfilled'],
             ],
             'placedBy'        => auth()->id(),
@@ -77,7 +79,7 @@ class OrderController extends Controller
         $data = $request->validate([
             'customer_id'       => ['required','exists:customers,id'],
             'placed_by'         => ['required','exists:users,id'],
-            'status'            => ['required','in:draft,placed,cancelled,fulfilled'],
+            'status'            => ['required','in:draft,placed,fulfilled'],
             'items'             => ['required','array','min:1'],
             'items.*.product_id'=> ['required','exists:products,id'],
             'items.*.qty'       => ['required','integer','min:1'],
@@ -103,36 +105,52 @@ class OrderController extends Controller
                 ];
             })->all();
 
-            if (in_array($order->status, ['placed','fulfilled', 'draft'], true)) {
-                // aggregating qty per product in case the same product appears in multiple lines
-                $needByProduct = collect($data['items'])
-                    ->groupBy('product_id')
-                    ->map(fn($rows) => $rows->sum('qty'));
+            // Build need per product (sum of qty)
+            $needByProduct = collect($data['items'])
+                ->groupBy('product_id')
+                ->map(fn($rows) => (int)$rows->sum('qty'));
 
-                foreach ($needByProduct as $productId => $needQty) {
-                    // pessimistic locking the product row during check & decrement
-                    $product = Product::whereKey($productId)->lockForUpdate()->first();
+            foreach ($needByProduct as $productId => $needQty) {
+                $product = Product::whereKey($productId)->lockForUpdate()->firstOrFail();
 
-                    if (!$product) {
-                        throw ValidationException::withMessages([
-                            'items' => ["Product {$productId} not found."],
-                        ]);
-                    }
-
-                    if ($product->qty < $needQty) {
-                        // surface error tied to the first offending line for better UX
-                        $idx = collect($data['items'])->search(
-                            fn ($row) => $row['product_id'] == $productId
-                        );
-
-                        throw ValidationException::withMessages([
-                            "items.$idx.qty" => "Quantity exceeds available stock ({$product->qty}).",
-                        ]);
-                    }
-
-                    // decrement stock
-                    $product->decrement('qty', $needQty);
+                // available = on_hand - reserved
+                $available = $product->qty - $product->reserved;
+                if ($available < $needQty) {
+                    $idx = collect($data['items'])->search(fn($row) => $row['product_id'] == $productId);
+                    throw ValidationException::withMessages([
+                        "items.$idx.qty" => "Quantity exceeds available stock ({$available}).",
+                    ]);
                 }
+
+                // reserve (do NOT touch qty)
+                $product->reserved += $needQty;
+                $product->save();
+
+                Reservation::updateOrCreate(
+                    ['order_id' => $order->id, 'product_id' => $productId],
+                    ['qty' => $needQty]
+                );
+            }
+
+            // If fulfilled at creation: consume immediately
+            if ($order->status === 'fulfilled') {
+                $res = Reservation::where('order_id', $order->id)->get();
+                foreach ($res as $r) {
+                    $p = Product::whereKey($r->product_id)->lockForUpdate()->firstOrFail();
+                    $p->reserved = max(0, $p->reserved - $r->qty);
+                    $p->qty      = max(0, $p->qty - $r->qty);
+                    $p->save();
+
+                    StockMovement::create([
+                        'product_id'     => $p->id,
+                        'qty'            => -$r->qty,
+                        'type'           => 'fulfill',
+                        'reference_type' => Order::class,
+                        'reference_id'   => $order->id,
+                        'note'           => 'Order fulfillment',
+                    ]);
+                }
+                Reservation::where('order_id', $order->id)->delete();
             }
 
             // Bulk insert for performance
@@ -161,18 +179,22 @@ class OrderController extends Controller
             ->map(fn($c) => ['label' => $c->name, 'value' => $c->id]);
 
         $productOptions = Product::query()
-            ->where('is_active', true)       // only active products
+            ->where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'price', 'qty'])
+            ->get(['id','name','price','qty','reserved'])
             ->map(fn($p) => [
-                'label' => $p->name,
-                'value' => $p->id,
-                'price' => (float) $p->price,
-                'stock' => (int) $p->qty,
+                'label'     => $p->name,
+                'value'     => $p->id,
+                'price'     => (float)$p->price,
+                'available' => max((int)$p->qty - (int)$p->reserved, 0),
             ]);
 
-
         $order->load(['items:id,order_id,product_id,qty,unit_total', 'customer:id,name', 'placedBy:id,name']);
+
+        $oldQtyMap = $order->items
+            ->groupBy('product_id')
+            ->map(fn($rows) => (int)$rows->sum('qty'))
+            ->toArray();
 
         // shape order for the page
         $orderPayload = [
@@ -192,6 +214,7 @@ class OrderController extends Controller
             'order'          => $orderPayload,
             'customerOptions'=> $customerOptions,
             'productOptions' => $productOptions,
+            'oldQtyMap'      => $oldQtyMap,
             'statusOptions'  => [
                 ['label'=>'Draft','value'=>'draft'],
                 ['label'=>'Placed','value'=>'placed'],
@@ -324,35 +347,87 @@ class OrderController extends Controller
             $order->load('items');
 
 
-            // Stock adjustment logic
+            // stock adjustment logic
+            // == reservations-based stock adjustment ==
 
-            // If order is fulfilled then skip 
-            if ($previousStatus === 'fulfilled' || $data['status'] === 'fulfilled') {
-                return;
-            }
+            // collect new requested per product
+            $newNeed = collect($data['items'])
+                ->groupBy('product_id')
+                ->map(fn($rows) => (int)$rows->sum('qty'));
 
-            // If order is cancelled → restock all items
-            if ($data['status'] === 'cancelled') {
-                foreach ($order->items as $it) {
-                    Product::where('id', $it->product_id)->increment('qty', $it->qty);
-                }
-            }
+            //  load old reservations for this order
+            $oldRes = Reservation::where('order_id', $order->id)->get()->keyBy('product_id'); // pid => Reservation
 
-            // If draft/placed then adjust based on quantity delta
-            if (in_array($data['status'], ['placed', 'draft'])) {
-                foreach ($data['items'] as $newItem) {
-                    $pid = $newItem['product_id'];
-                    $newQty = $newItem['qty'];
-                    $oldQty = $oldItems[$pid]->qty ?? 0;
-                    $delta = $newQty - $oldQty;
+            // apply deltas to products.reserved
+            foreach ($newNeed as $pid => $newQty) {
+                $oldQty = (int)($oldRes[$pid]->qty ?? 0);
+                $delta  = $newQty - $oldQty;
 
-                    if ($delta > 0) {
-                        Product::where('id', $pid)->decrement('qty', $delta);
-                    } elseif ($delta < 0) {
-                        Product::where('id', $pid)->increment('qty', abs($delta));
+                if ($delta !== 0) {
+                    $product   = Product::whereKey($pid)->lockForUpdate()->firstOrFail();
+                    $available = $product->qty - $product->reserved;
+
+                    if ($delta > 0 && $available < $delta) {
+                        throw ValidationException::withMessages([
+                            'items' => ["Insufficient available stock for product #{$pid} (available: {$available})."],
+                        ]);
                     }
+
+                    $product->reserved = max(0, $product->reserved + $delta);
+                    $product->save();
                 }
+
+                Reservation::updateOrCreate(
+                    ['order_id' => $order->id, 'product_id' => $pid],
+                    ['qty' => $newQty]
+                );
             }
+
+            // remove reservations for products no longer present
+            $nowPids  = $newNeed->keys();
+            $toRemove = $oldRes->keys()->diff($nowPids);
+            if ($toRemove->isNotEmpty()) {
+                $rem = Reservation::where('order_id', $order->id)->whereIn('product_id', $toRemove)->get();
+                foreach ($rem as $r) {
+                    $p = Product::whereKey($r->product_id)->lockForUpdate()->firstOrFail();
+                    $p->reserved = max(0, $p->reserved - $r->qty);
+                    $p->save();
+                }
+                Reservation::where('order_id', $order->id)->whereIn('product_id', $toRemove)->delete();
+            }
+
+            //  if status switched to cancelled then release all reservations
+            if ($data['status'] === 'cancelled') {
+                $res = Reservation::where('order_id', $order->id)->get();
+                foreach ($res as $r) {
+                    $p = Product::whereKey($r->product_id)->lockForUpdate()->firstOrFail();
+                    $p->reserved = max(0, $p->reserved - $r->qty);
+                    $p->save();
+                }
+                Reservation::where('order_id', $order->id)->delete();
+            }
+
+            //  if status switched to fulfilled then consume reserved into on_hand and log movement
+            if ($data['status'] === 'fulfilled') {
+                $res = Reservation::where('order_id', $order->id)->get();
+                foreach ($res as $r) {
+                    $p = Product::whereKey($r->product_id)->lockForUpdate()->firstOrFail();
+                    $p->reserved = max(0, $p->reserved - $r->qty);
+                    $p->qty      = max(0, $p->qty - $r->qty);
+                    $p->save();
+
+                    StockMovement::create([
+                        'product_id'     => $p->id,
+                        'qty'            => -$r->qty,
+                        'type'           => 'fulfill',
+                        'reference_type' => Order::class,
+                        'reference_id'   => $order->id,
+                        'note'           => 'Order fulfillment',
+                    ]);
+                }
+                Reservation::where('order_id', $order->id)->delete();
+            }
+
 
             // Recompute order total
             $total = $order->items()->sum('unit_total');
