@@ -136,7 +136,7 @@ watch(filtered, () => {
     </button>
 
     <!-- Dropdown -->
-    <div v-if="open" class="absolute z-50 mt-1 w-full rounded-md border bg-white shadow-lg" role="dialog">
+    <div v-if="open" class="dark:bg-neutral-700 dark:text-neutral-100 absolute z-50 mt-1 w-full rounded-md border bg-white shadow-lg" role="dialog">
       <!-- Search -->
       <div class="p-2 border-b">
         <input type="text" v-model="search" placeholder="Search…" class="w-full rounded-md border px-2 py-1 text-sm"
@@ -150,9 +150,9 @@ watch(filtered, () => {
         </li>
 
         <li v-for="(opt, idx) in filtered" :key="opt.value ?? idx" role="option"
-          :aria-selected="selected && opt.value === selected.value" class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+          :aria-selected="selected && opt.value === selected.value" class="cursor-pointer px-3 py-2"
           :class="{
-            'bg-gray-100': activeIndex === idx,
+            'bg-gray-400': activeIndex === idx,
             'font-medium': selected && opt.value === selected.value
           }" @mouseenter="activeIndex = idx" @mousedown.prevent @click="selectOption(opt)">
           {{ opt.label }}

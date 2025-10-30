@@ -201,6 +201,7 @@ class OrderController extends Controller
             'id'          => $order->id,
             'customer_id' => $order->customer_id,
             'placed_by'   => $order->placed_by,
+            'placed_by_name' => $order->placedBy?->name ?? '—',
             'status'      => $order->status,
             'total'       => (float) $order->total,
             'items'       => $order->items->map(fn($it) => [

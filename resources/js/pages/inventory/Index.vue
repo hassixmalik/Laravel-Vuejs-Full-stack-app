@@ -52,7 +52,7 @@ const breadcrumbs: BreadcrumbItem[] = [
       <Link href="/inventory/create"><Button>Add Product</Button></Link>
     </div>
     <div v-if="page.props.flash?.message" class="alert p-2">
-      <Alert class="bg-blue-200">
+      <Alert class="dark:bg-neutral-700 dark:text-neutral-100 bg-blue-200">
         <Rocket class="h-4 w-4" />
         <AlertTitle>Notification!</AlertTitle>
         <AlertDescription>
@@ -86,7 +86,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             BD {{ product.price }}
           </TableCell>
           <TableCell>
-            <Link :href="`/inventory/${product.id}/edit`"><Button class="bg-slate-600"><SquarePen /></Button></Link>
+            <Link :href="`/inventory/${product.id}/edit`"><Button><SquarePen /></Button></Link>
           </TableCell>
         </TableRow>
       </TableBody>

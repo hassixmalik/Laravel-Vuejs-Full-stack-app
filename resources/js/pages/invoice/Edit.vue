@@ -100,7 +100,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         </div>
 
         <!-- Summary -->
-        <div class="rounded-lg border p-4 bg-white space-y-1">
+        <div class="dark:bg-neutral-700 dark:text-neutral-100 rounded-lg border p-4 bg-white space-y-1">
           <div class="text-sm"><span class="font-semibold">Customer:</span> {{ page.props.invoice.customer.name }}</div>
           <div class="text-sm"><span class="font-semibold">Created By:</span> {{ page.props.invoice.placed_by_name }}</div>
           <div class="text-sm"><span class="font-semibold">Subtotal:</span> {{ page.props.invoice.subtotal.toFixed(3) }} BD</div>
@@ -114,10 +114,10 @@ const breadcrumbs: BreadcrumbItem[] = [
       </form>
 
       <!-- Optional: show current items (read-only) -->
-      <div class="rounded-lg border p-4 bg-white">
+      <div class="dark:bg-neutral-700 dark:text-neutral-100 rounded-lg border p-4 bg-white">
         <h3 class="font-semibold mb-2">Items</h3>
         <table class="w-full border-collapse border text-left">
-          <thead class="bg-gray-100">
+          <thead class="dark:bg-neutral-700 dark:text-neutral-100 bg-gray-100">
             <tr>
               <th class="border p-2">Item</th>
               <th class="border p-2">Qty</th>

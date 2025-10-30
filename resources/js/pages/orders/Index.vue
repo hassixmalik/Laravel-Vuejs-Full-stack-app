@@ -8,16 +8,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
@@ -74,7 +79,7 @@ const breadcrumbs: BreadcrumbItem[] = [
       <Link href="/orders/createOrder"><Button>Create Order</Button></Link>
     </div>
     <div v-if="page.props.flash?.message" class="alert p-2">
-      <Alert class="bg-blue-200">
+      <Alert class="bg-blue-200 dark:bg-neutral-700 dark:text-neutral-100">
         <Rocket class="h-4 w-4" />
         <AlertTitle>Notification!</AlertTitle>
         <AlertDescription>
@@ -106,32 +111,54 @@ const breadcrumbs: BreadcrumbItem[] = [
           <TableCell class="tabular-nums">BD {{ o.total }}</TableCell>
           <TableCell>{{ o.created_at }}</TableCell>
           <TableCell class="text-center">
-            <Link :href="`/orders/${o.id}/edit`"><Button class="bg-slate-400 mx-1">
-              <SquarePen />
-            </Button></Link>
-            <Dialog>
-              <DialogTrigger as-child>
-                <Button variant="outline">
-                  <FileInput />
-                </Button>
-              </DialogTrigger>
-              <DialogContent class="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Convert to Invoice</DialogTitle>
-                  <DialogDescription>
-                    By clicking 'convert', order will be converted into an invoice that can be sent to Customer via
-                    Email
-                  </DialogDescription>
-                </DialogHeader>
-                <div>Do you want to convert order#{{ o.id }} into Invoice?</div>
-                <form @submit.prevent="convertOrder(o.id)">
-                  <Button type="submit" :disabled="convertForm.processing">
-                    <span v-if="convertForm.processing">Converting...</span>
-                    <span v-else>Convert</span>
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Link :href="`/orders/${o.id}/edit`"><Button class="bg-slate-400 mx-1">
+                    <SquarePen />
+                  </Button></Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Edit Order details</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Dialog>
+                    <DialogTrigger as-child>
+                      <Button variant="outline">
+                        <FileInput />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent class="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Convert to Invoice</DialogTitle>
+                        <DialogDescription>
+                          By clicking 'convert', order will be converted into an invoice that can be sent to Customer
+                          via
+                          Email
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div>Do you want to convert order#{{ o.id }} into Invoice?</div>
+                      <form @submit.prevent="convertOrder(o.id)">
+                        <Button type="submit" :disabled="convertForm.processing">
+                          <span v-if="convertForm.processing">Converting...</span>
+                          <span v-else>Convert</span>
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Convert to Invoice</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+
           </TableCell>
         </TableRow>
       </TableBody>

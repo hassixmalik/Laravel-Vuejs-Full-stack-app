@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
@@ -18,12 +19,12 @@ class CustomerController extends Controller
 
     public function store(Request $request){
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
-            'phone' => 'required|string|min:0',
-            'is_active' => 'required|boolean',
-            'city' => 'nullable|string',
-            'address' => 'nullable|string|max:1000',
+            'name'      => ['required','string','max:255'],
+            'email'     => ['required','email','max:255', Rule::unique('customers', 'email')],
+            'phone'     => ['required','string','max:32', Rule::unique('customers', 'phone')], // keep string for leading zeros
+            'is_active' => ['required','boolean'],
+            'city'      => ['nullable','string'],
+            'address'   => ['nullable','string','max:1000'],
         ]);
         Customer::create($data);
         return redirect()->route('customer.index')->with('message', 'Customer added successfully');

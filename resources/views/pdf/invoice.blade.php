@@ -13,11 +13,24 @@
   </style>
 </head>
 <body>
+  @php
+    $companyName = config('mail.from.name') ?: config('app.name');
+
+    $discounted = max(($invoice['subtotal'] ?? 0) - ($invoice['discount'] ?? 0), 0);
+    $vat = max(($invoice['total'] ?? 0) - $discounted, 0);
+  @endphp
+
   <h1>Invoice #{{ $invoice['id'] }}</h1>
+
+  <p>
+    <strong>From:</strong> {{ $companyName }}<br>
+  </p>
+
+
   <p><strong>Date:</strong> {{ $invoice['date'] ?? '—' }} |
      <strong>Status:</strong> {{ $invoice['status'] }}</p>
 
-  <p><strong>Customer:</strong> {{ $invoice['customer']['name'] }}<br>
+  <p><strong>Bill To:</strong> {{ $invoice['customer']['name'] }}<br>
      {{ $invoice['customer']['email'] }}<br>
      {{ $invoice['customer']['phone'] }}<br>
      {{ $invoice['customer']['address'] }}</p>
@@ -41,10 +54,14 @@
   </table>
 
   <p class="right">
-    Subtotal: {{ number_format($invoice['subtotal'],3) }} BD<br>
-    Discount: {{ number_format($invoice['discount'],3) }} BD<br>
-    VAT: {{ number_format(($invoice['total'] - max($invoice['subtotal'] - $invoice['discount'], 0)),3) }} BD<br>
-    <strong>Total: {{ number_format($invoice['total'],3) }} BD</strong>
+    Subtotal: {{ number_format($invoice['subtotal'] ?? 0,3) }} BD<br>
+    Discount: {{ number_format($invoice['discount'] ?? 0,3) }} BD<br>
+    VAT: {{ number_format($vat,3) }} BD<br>
+    <strong>Total: {{ number_format($invoice['total'] ?? 0,3) }} BD</strong>
+  </p>
+  <p style="margin: 8px 0; font-style: italic; color: #555;">
+    Thanks for being a valued customer.
   </p>
 </body>
+
 </html>

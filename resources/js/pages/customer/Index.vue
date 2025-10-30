@@ -11,7 +11,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/vue3';
@@ -54,7 +60,7 @@ const breadcrumbs: BreadcrumbItem[] = [
       <Link href="/customer/create"><Button>Add Customer</Button></Link>
     </div>
     <div v-if="page.props.flash?.message" class="alert p-2">
-      <Alert class="bg-blue-200">
+      <Alert class="bg-blue-200 dark:bg-neutral-700 dark:text-neutral-100">
         <Rocket class="h-4 w-4" />
         <AlertTitle>Notification!</AlertTitle>
         <AlertDescription>
@@ -86,7 +92,18 @@ const breadcrumbs: BreadcrumbItem[] = [
           <!-- <TableCell>{{ customer.address }}</TableCell> -->
           <TableCell>{{ customer.city ? customer.city : 'Not mentioned' }}</TableCell>
           <TableCell  :class="customer.is_active ? 'text-green-500' : 'text-red-500'"> {{ customer.is_active ? 'Active' : 'Disabled' }}</TableCell>
-          <TableCell><Link :href="`/customer/${customer.id}/edit`"><Button class="bg-slate-600"><SquarePen /></Button></Link></TableCell>
+          <TableCell>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                    <Link :href="`/customer/${customer.id}/edit`"><Button><SquarePen /></Button></Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Edit Customer details</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>

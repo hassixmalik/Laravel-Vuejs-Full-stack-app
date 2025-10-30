@@ -361,7 +361,7 @@ class InvoiceController extends Controller
         $VAT_RATE    = 0.15;    // SA default
         $DISCOUNT    = 0.000;   // hard-filled
         $VAT_ENABLED = true;    // hard-filled
-        $STATUS      = 'draft';// or 'draft' if you prefer
+        $STATUS      = 'draft'; // or 'draft' if you prefer
 
         // Prevent dup invoices for same order
         if (Invoice::where('order_id', $order->id)->exists()) {
@@ -373,6 +373,7 @@ class InvoiceController extends Controller
         $invoice = DB::transaction(function () use ($order, $DISCOUNT, $VAT_ENABLED, $VAT_RATE, $STATUS) {
             // Load minimal context
             $order->load(['customer:id', 'placedBy:id']);
+            $order->update(['status' => 'placed']);
 
             // Get order items
             $orderItems = OrderItem::where('order_id', $order->id)->get(['product_id','qty','unit_total']);
@@ -423,6 +424,8 @@ class InvoiceController extends Controller
                 ];
             })->all();
 
+
+
             InvoiceItem::insert($lines);
 
             return $invoice;
@@ -444,6 +447,8 @@ class InvoiceController extends Controller
             'createdBy:id,name',
             'items.product:id,name',
         ]);
+
+        $invoice->update(['status' => 'issued']); // marking email as issued
 
         $items = $invoice->items->map(function ($it) {
             $unitPrice = $it->qty > 0 ? (float)$it->unit_total / (int)$it->qty : 0.0;

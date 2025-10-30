@@ -67,7 +67,7 @@ const breadcrumbs: BreadcrumbItem[] = [
       <Link href="/invoice/create"><Button>Add Invoice</Button></Link>
     </div>
     <div v-if="page.props.flash?.message" class="alert p-2">
-      <Alert class="bg-blue-200">
+      <Alert class="bg-blue-200 dark:bg-neutral-700 dark:text-neutral-100">
         <Rocket class="h-4 w-4" />
         <AlertTitle>Notification!</AlertTitle>
         <AlertDescription>

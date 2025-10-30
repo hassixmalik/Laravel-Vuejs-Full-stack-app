@@ -110,9 +110,11 @@ const handleDelete = (id: number) => {
         <Button @click="printInvoice">
           <Printer />
         </Button>
+
         <Link :href="`/invoice/${invoice.id}/edit`"><Button class="bg-slate-600">
           <SquarePen />
         </Button></Link>
+
         <Dialog>
           <DialogTrigger as-child>
             <Button class="bg-red-400" :disabled="invoice.status === 'issued'">
@@ -146,7 +148,7 @@ const handleDelete = (id: number) => {
       {{ $page.props.errors.email }}
     </div>
     <div v-if="$page.props.flash?.message" class="p-2 text-sm text-green-600">
-      <Alert class="bg-blue-200">
+      <Alert class="bg-blue-200 dark:bg-neutral-700 dark:text-neutral-100">
         <Rocket class="h-4 w-4" />
         <AlertTitle>Notification!</AlertTitle>
         <AlertDescription>
@@ -157,7 +159,7 @@ const handleDelete = (id: number) => {
 
     <div class="flex justify-center">
       <!-- Print target -->
-      <div class="p-8 max-w-3xl w-full bg-white rounded shadow" ref="printTarget">
+      <div class="dark:bg-neutral-700 dark:text-neutral-100 p-8 max-w-3xl w-full bg-white rounded shadow" ref="printTarget">
         <h1 class="text-3xl font-bold mb-4">Invoice #{{ invoice.id }}</h1>
 
         <div class="mb-6">
@@ -182,7 +184,7 @@ const handleDelete = (id: number) => {
         </div>
 
         <table class="w-full border-collapse border text-left mb-6">
-          <thead class="bg-gray-100">
+          <thead class="dark:bg-neutral-700 dark:text-neutral-100 bg-gray-100">
             <tr>
               <th class="border p-2">Item</th>
               <th class="border p-2">Qty</th>
